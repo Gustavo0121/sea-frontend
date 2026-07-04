@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import { Card } from '../../components/Card'
 import { Button } from '../../components/Button'
+import { useAuth } from '../../hooks/useAuth'
 
 const Wrapper = styled.main`
   min-height: 100%;
@@ -21,12 +22,20 @@ const Subtitle = styled.p`
 `
 
 export function Home() {
+  const { user, logout } = useAuth()
+
   return (
     <Wrapper>
       <Card>
         <Title>SEA Tecnologia</Title>
-        <Subtitle>Sistema de Cadastro de Clientes</Subtitle>
-        <Button type="button">Começar</Button>
+        <Subtitle>
+          {(user?.username ?? user?.sub)
+            ? `Olá, ${user?.username ?? user?.sub}`
+            : 'Sistema de Cadastro de Clientes'}
+        </Subtitle>
+        <Button type="button" onClick={logout}>
+          Sair
+        </Button>
       </Card>
     </Wrapper>
   )

@@ -9,6 +9,7 @@ coverage/
 # Production
 build/
 dist/
+dist-ssr/
 .next/
 out/
 
@@ -31,4 +32,6 @@ yarn-error.log*
 
 # OS Files
 .DS_Store
-Thumbs.db   
+Thumbs.db
+
+CLAUDE.md

@@ -1,10 +1,12 @@
 export interface LoginCredentials {
-  username: string
-  password: string
+  login: string
+  senha: string
 }
 
 export interface AuthResponse {
   token: string
+  tipo: string
+  expiraEmSegundos: number
 }
 
 export interface DecodedToken {

@@ -10,8 +10,8 @@ import { useAuth } from '../../hooks/useAuth'
 import { useToast } from '../../hooks/useToast'
 
 const loginSchema = z.object({
-  username: z.string().trim().min(1, 'Informe o usuário'),
-  password: z.string().min(1, 'Informe a senha'),
+  login: z.string().trim().min(1, 'Informe o usuário'),
+  senha: z.string().min(1, 'Informe a senha'),
 })
 
 type LoginFormValues = z.infer<typeof loginSchema>
@@ -86,15 +86,15 @@ export function Login() {
           <Input
             label="Usuário"
             autoComplete="username"
-            error={errors.username?.message}
-            {...register('username')}
+            error={errors.login?.message}
+            {...register('login')}
           />
           <Input
             label="Senha"
             type="password"
             autoComplete="current-password"
-            error={errors.password?.message}
-            {...register('password')}
+            error={errors.senha?.message}
+            {...register('senha')}
           />
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? 'Entrando...' : 'Entrar'}

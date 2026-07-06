@@ -1,7 +1,7 @@
 export const colors = {
   petrol: '#0B4F6C',
   petrolDark: '#083A50',
-  blueDark: '#062B3D',
+  blueDark: '#1D7CB2',
   blueLight: '#4FA8D8',
   white: '#FFFFFF',
   grayLightest: '#F7F9FA',

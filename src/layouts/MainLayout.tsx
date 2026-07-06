@@ -1,4 +1,5 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { flushSync } from 'react-dom'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { Button } from '../components/Button'
 import { useAuth } from '../hooks/useAuth'
@@ -33,8 +34,8 @@ const Header = styled.header`
   align-items: center;
   justify-content: space-between;
   padding: 0 ${({ theme }) => theme.spacing.lg};
-  background-color: ${({ theme }) => theme.colors.white};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.grayLight};
+  background-color: ${({ theme }) => theme.colors.blueDark};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.petrolDark};
 `
 
 const UserArea = styled.div`
@@ -45,13 +46,21 @@ const UserArea = styled.div`
 
 const UserName = styled.span`
   font-size: ${({ theme }) => theme.typography.fontSize.sm};
-  color: ${({ theme }) => theme.colors.grayText};
+  color: ${({ theme }) => theme.colors.grayLight};
 `
 
-const Brand = styled.span`
-  font-size: ${({ theme }) => theme.typography.fontSize.lg};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
-  color: ${({ theme }) => theme.colors.blueDark};
+const LogoutButton = styled(Button)`
+  color: ${({ theme }) => theme.colors.white};
+  border-color: rgba(255, 255, 255, 0.4);
+
+  &:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.12);
+  }
+`
+
+const Brand = styled.img`
+  height: 36px;
+  width: auto;
 `
 
 const Sidebar = styled.nav`
@@ -95,16 +104,24 @@ const Content = styled.main`
 
 export function MainLayout() {
   const { user, logout } = useAuth()
+  const navigate = useNavigate()
+
+  function handleLogout() {
+    flushSync(() => {
+      logout()
+    })
+    navigate('/login', { replace: true, state: null })
+  }
 
   return (
     <Wrapper>
       <Header>
-        <Brand>SEA Tecnologia</Brand>
+        <Brand src="/sea_logo.png" alt="SEA Tecnologia" />
         <UserArea>
           <UserName>{user?.username ?? user?.sub}</UserName>
-          <Button type="button" $variant="secondary" onClick={logout}>
+          <LogoutButton type="button" $variant="secondary" onClick={handleLogout}>
             Sair
-          </Button>
+          </LogoutButton>
         </UserArea>
       </Header>
       <Sidebar>

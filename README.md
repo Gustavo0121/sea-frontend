@@ -68,3 +68,23 @@ src
 ├── styles       # design tokens, tema e estilos globais
 └── assets       # imagens, ícones, etc.
 ```
+
+## Componentes reutilizáveis
+
+Biblioteca de componentes construída na Fase 2 do plano de desenvolvimento, usada como base para as telas de negócio:
+
+- `Button` — variantes `primary`, `secondary` e `danger`
+- `Input` — com suporte a label e mensagem de erro
+- `Card`
+- `Modal`
+- `ConfirmDialog` — confirmação antes de ações destrutivas (ex: exclusão)
+- `Table` — genérica, com colunas configuráveis e estado de loading
+- `Pagination`
+- `Loading` / `Skeleton`
+- `Toast` — feedback de sucesso/erro via context
+
+Todos os componentes têm uma vitrine de uso na rota `/dev/components` (`DevComponents`), útil para validar visual e comportamento isoladamente.
+
+## Layout
+
+`MainLayout` (`src/layouts`) define a casca das telas autenticadas: header com marca e usuário logado, sidebar de navegação e área de conteúdo (via `Outlet` do React Router). É aplicado às rotas protegidas em `routes/router.tsx`.

@@ -1,4 +1,5 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { flushSync } from 'react-dom'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { Button } from '../components/Button'
 import { useAuth } from '../hooks/useAuth'
@@ -95,6 +96,14 @@ const Content = styled.main`
 
 export function MainLayout() {
   const { user, logout } = useAuth()
+  const navigate = useNavigate()
+
+  function handleLogout() {
+    flushSync(() => {
+      logout()
+    })
+    navigate('/login', { replace: true, state: null })
+  }
 
   return (
     <Wrapper>
@@ -102,7 +111,7 @@ export function MainLayout() {
         <Brand>SEA Tecnologia</Brand>
         <UserArea>
           <UserName>{user?.username ?? user?.sub}</UserName>
-          <Button type="button" $variant="secondary" onClick={logout}>
+          <Button type="button" $variant="secondary" onClick={handleLogout}>
             Sair
           </Button>
         </UserArea>

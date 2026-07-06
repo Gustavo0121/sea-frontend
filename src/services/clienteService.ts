@@ -14,4 +14,8 @@ export const clienteService = {
     const { data } = await api.get<Page<Cliente>>('/clientes', { params })
     return data
   },
+
+  async excluir(id: number): Promise<void> {
+    await api.delete(`/clientes/${id}`)
+  },
 }

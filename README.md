@@ -97,4 +97,16 @@ Tela inicial pós-login (Fase 3 do plano de desenvolvimento), na rota `/`:
 - Tabela com os últimos clientes cadastrados (`Nome`, `CPF`)
 - Botão de navegação para a listagem de clientes (`/clientes`)
 
-Os dados vêm de `clienteService.listar` (`GET /clientes`, paginado pelo backend) via o hook `useClientesResumo`, que usa React Query para cache/loading/erro. A rota `/clientes` por enquanto exibe apenas um placeholder — a listagem completa (busca, paginação, ações) é entregue na Fase 4.
+Os dados vêm de `clienteService.listar` (`GET /clientes`, paginado pelo backend) via o hook `useClientesResumo`, que usa React Query para cache/loading/erro.
+
+## Listagem de clientes
+
+Rota `/clientes` (Fase 4 do plano de desenvolvimento):
+
+- Busca por **Nome** e **CPF**, com debounce (`useDebouncedValue`) para evitar uma requisição a cada tecla
+- Paginação consumida do backend (`Pagination` + `useClientesListagem`)
+- Ações por linha: **Ver**, **Editar** e **Excluir** — as duas últimas só aparecem para usuários com role `ADMIN` (mesma regra de autorização do backend)
+- Exclusão com `ConfirmDialog` antes de efetivar e `Toast` de sucesso/erro
+- Cache via React Query, invalidado (`queryKey: ['clientes']`) após excluir, o que também mantém o resumo do Dashboard sincronizado
+
+As rotas `/clientes/novo`, `/clientes/:id` e `/clientes/:id/editar` (Cadastro, Visualização e Edição) por enquanto exibem apenas um placeholder (`EmDesenvolvimento`) — serão implementadas nas Fases 5 e 6.

@@ -110,7 +110,7 @@ Rota `/clientes` (Fase 4 do plano de desenvolvimento):
 - Exclusão com `ConfirmDialog` antes de efetivar e `Toast` de sucesso/erro
 - Cache via React Query, invalidado (`queryKey: ['clientes']`) após excluir, o que também mantém o resumo do Dashboard sincronizado
 
-A rota `/clientes/:id` (Visualização) por enquanto exibe apenas um placeholder (`EmDesenvolvimento`) — será implementada na Fase 6.
+A rota `/clientes/:id` leva à página de visualização de detalhes (Fase 6).
 
 ## Formulário de cliente (Cadastro/Edição)
 
@@ -125,3 +125,11 @@ Rotas `/clientes/novo` e `/clientes/:id/editar` (Fase 5 do plano de desenvolvime
 - Toast de sucesso/erro em loading no submit, com tratamento específico para CPF duplicado (409)
 
 **Observação de segurança:** o backend retorna o CPF mascarado de forma irreversível (ex: `100.***.***-08`), então no modo de edição o campo CPF não é pré-preenchido — fica vazio com uma dica mostrando o valor mascarado, exigindo que o CPF completo seja redigitado para salvar a edição.
+
+## Visualização de detalhes
+
+Rota `/clientes/:id` (Fase 6 do plano de desenvolvimento), página somente leitura com os dados completos do cliente:
+
+- Nome, CPF (mascarado como retornado pelo backend), endereço completo, telefones (com label do tipo) e emails
+- Ações rápidas: **Editar** e **Excluir** (com `ConfirmDialog` + Toast), visíveis apenas para `ADMIN`
+- **Voltar** para a listagem, disponível a todos os usuários autenticados

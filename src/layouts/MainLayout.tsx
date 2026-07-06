@@ -3,7 +3,10 @@ import styled from 'styled-components'
 import { Button } from '../components/Button'
 import { useAuth } from '../hooks/useAuth'
 
-const navItems = [{ label: 'Dashboard', to: '/' }]
+const navItems = [
+  { label: 'Dashboard', to: '/' },
+  { label: 'Clientes', to: '/clientes' },
+]
 
 const Wrapper = styled.div`
   min-height: 100%;

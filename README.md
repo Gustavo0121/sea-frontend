@@ -32,7 +32,7 @@ cp .env.example .env
 
 | Variável       | Descrição                      | Padrão                       |
 | -------------- | ------------------------------- | ---------------------------- |
-| `VITE_API_URL` | URL base da API REST consumida | `http://localhost:3000/api`  |
+| `VITE_API_URL` | URL base da API REST consumida | `http://localhost:8080`      |
 
 ## Rodando o projeto
 
@@ -88,3 +88,13 @@ Todos os componentes têm uma vitrine de uso na rota `/dev/components` (`DevComp
 ## Layout
 
 `MainLayout` (`src/layouts`) define a casca das telas autenticadas: header com marca e usuário logado, sidebar de navegação e área de conteúdo (via `Outlet` do React Router). É aplicado às rotas protegidas em `routes/router.tsx`.
+
+## Dashboard
+
+Tela inicial pós-login (Fase 3 do plano de desenvolvimento), na rota `/`:
+
+- Card de resumo com o total de clientes cadastrados
+- Tabela com os últimos clientes cadastrados (`Nome`, `CPF`)
+- Botão de navegação para a listagem de clientes (`/clientes`)
+
+Os dados vêm de `clienteService.listar` (`GET /clientes`, paginado pelo backend) via o hook `useClientesResumo`, que usa React Query para cache/loading/erro. A rota `/clientes` por enquanto exibe apenas um placeholder — a listagem completa (busca, paginação, ações) é entregue na Fase 4.

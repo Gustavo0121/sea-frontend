@@ -34,3 +34,11 @@ export interface Page<T> {
   number: number
   size: number
 }
+
+export interface ClienteRequestDTO {
+  nome: string
+  cpf: string
+  endereco: Endereco
+  telefones: Telefone[]
+  emails: Email[]
+}

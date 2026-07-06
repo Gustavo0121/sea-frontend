@@ -75,6 +75,7 @@ Biblioteca de componentes construída na Fase 2 do plano de desenvolvimento, usa
 
 - `Button` — variantes `primary`, `secondary` e `danger`
 - `Input` — com suporte a label e mensagem de erro
+- `Select` — mesmo padrão visual do `Input`, para campos de escolha (ex: tipo de telefone)
 - `Card`
 - `Modal`
 - `ConfirmDialog` — confirmação antes de ações destrutivas (ex: exclusão)
@@ -109,4 +110,18 @@ Rota `/clientes` (Fase 4 do plano de desenvolvimento):
 - Exclusão com `ConfirmDialog` antes de efetivar e `Toast` de sucesso/erro
 - Cache via React Query, invalidado (`queryKey: ['clientes']`) após excluir, o que também mantém o resumo do Dashboard sincronizado
 
-As rotas `/clientes/novo`, `/clientes/:id` e `/clientes/:id/editar` (Cadastro, Visualização e Edição) por enquanto exibem apenas um placeholder (`EmDesenvolvimento`) — serão implementadas nas Fases 5 e 6.
+A rota `/clientes/:id` (Visualização) por enquanto exibe apenas um placeholder (`EmDesenvolvimento`) — será implementada na Fase 6.
+
+## Formulário de cliente (Cadastro/Edição)
+
+Rotas `/clientes/novo` e `/clientes/:id/editar` (Fase 5 do plano de desenvolvimento), ambas servidas pelo **mesmo componente** `ClienteForm` (evita duplicação entre cadastro e edição):
+
+- Validação completa com Zod + React Hook Form (nome, CPF, endereço, telefones e emails), com revalidação em tempo real (`reValidateMode: 'onChange'`)
+- Máscaras reutilizáveis de CPF, CEP e telefone (`utils/masks.ts`), aplicadas via `Controller` do RHF
+- CEP: ao sair do campo, consulta `GET /enderecos/{cep}` (o próprio backend, que por sua vez integra com o ViaCEP) e preenche logradouro/bairro/cidade/UF automaticamente — o preenchimento continua editável manualmente
+- Telefones e emails dinâmicos (`useFieldArray`), telefone com máscara condicional por tipo (`RESIDENCIAL`/`COMERCIAL`/`CELULAR`)
+- Sanitização (`utils/sanitize.ts`) de todos os campos de texto antes do envio, evitando XSS
+- Restrito a usuários `ADMIN` — quem não for admin vê uma mensagem de acesso restrito em vez do formulário
+- Toast de sucesso/erro em loading no submit, com tratamento específico para CPF duplicado (409)
+
+**Observação de segurança:** o backend retorna o CPF mascarado de forma irreversível (ex: `100.***.***-08`), então no modo de edição o campo CPF não é pré-preenchido — fica vazio com uma dica mostrando o valor mascarado, exigindo que o CPF completo seja redigitado para salvar a edição.

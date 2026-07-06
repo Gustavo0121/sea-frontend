@@ -13,7 +13,7 @@ export interface DecodedToken {
   sub?: string
   username?: string
   name?: string
-  roles?: string[]
+  role?: string
   exp?: number
   iat?: number
   [claim: string]: unknown

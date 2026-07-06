@@ -1,6 +1,5 @@
 import styled from 'styled-components'
 import { Card } from '../../components/Card'
-import { useAuth } from '../../hooks/useAuth'
 
 const Title = styled.h1`
   font-size: ${({ theme }) => theme.typography.fontSize.xl};
@@ -12,13 +11,11 @@ const Subtitle = styled.p`
   margin: 0;
 `
 
-export function Home() {
-  const { user } = useAuth()
-
+export function Clientes() {
   return (
     <Card>
-      <Title>Olá, {user?.username ?? user?.sub}</Title>
-      <Subtitle>Sistema de Cadastro de Clientes</Subtitle>
+      <Title>Clientes</Title>
+      <Subtitle>A listagem de clientes será implementada na próxima fase.</Subtitle>
     </Card>
   )
 }

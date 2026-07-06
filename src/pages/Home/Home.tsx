@@ -1,15 +1,6 @@
 import styled from 'styled-components'
 import { Card } from '../../components/Card'
-import { Button } from '../../components/Button'
 import { useAuth } from '../../hooks/useAuth'
-
-const Wrapper = styled.main`
-  min-height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: ${({ theme }) => theme.spacing.xxl};
-`
 
 const Title = styled.h1`
   font-size: ${({ theme }) => theme.typography.fontSize.xl};
@@ -18,25 +9,16 @@ const Title = styled.h1`
 
 const Subtitle = styled.p`
   color: ${({ theme }) => theme.colors.grayText};
-  margin: 0 0 ${({ theme }) => theme.spacing.lg};
+  margin: 0;
 `
 
 export function Home() {
-  const { user, logout } = useAuth()
+  const { user } = useAuth()
 
   return (
-    <Wrapper>
-      <Card>
-        <Title>SEA Tecnologia</Title>
-        <Subtitle>
-          {(user?.username ?? user?.sub)
-            ? `Olá, ${user?.username ?? user?.sub}`
-            : 'Sistema de Cadastro de Clientes'}
-        </Subtitle>
-        <Button type="button" onClick={logout}>
-          Sair
-        </Button>
-      </Card>
-    </Wrapper>
+    <Card>
+      <Title>Olá, {user?.username ?? user?.sub}</Title>
+      <Subtitle>Sistema de Cadastro de Clientes</Subtitle>
+    </Card>
   )
 }

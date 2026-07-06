@@ -59,6 +59,8 @@ export function Login() {
   const {
     register,
     handleSubmit,
+    resetField,
+    setFocus,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -74,6 +76,8 @@ export function Login() {
       navigate(getRedirectPath(location), { replace: true })
     } catch {
       showToast('Usuário ou senha inválidos.', 'error')
+      resetField('senha')
+      setFocus('senha')
     }
   }
 

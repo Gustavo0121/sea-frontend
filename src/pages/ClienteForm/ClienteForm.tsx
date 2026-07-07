@@ -159,7 +159,7 @@ export function ClienteForm() {
     },
     onError: (error) => {
       if (axios.isAxiosError(error) && error.response?.status === 409) {
-        showToast(error.response.data?.message ?? 'CPF já cadastrado.', 'error')
+        showToast('CPF já cadastrado.', 'error')
       } else {
         showToast('Não foi possível salvar o cliente.', 'error')
       }

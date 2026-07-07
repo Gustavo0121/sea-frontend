@@ -16,6 +16,11 @@ permissions:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    env:
+      # Não é um endpoint real: só precisa existir para o Vite montar o
+      # connect-src do CSP no build e para o axios ter um baseURL nos testes
+      # (localmente isso vem do .env, que é gitignored e não existe no CI).
+      VITE_API_URL: https://api.example.com
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,5 +42,3 @@ jobs:
 
       - name: Build
         run: npm run build
-        env:
-          VITE_API_URL: https://api.example.com

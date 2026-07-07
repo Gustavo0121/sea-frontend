@@ -133,3 +133,19 @@ Rota `/clientes/:id` (Fase 6 do plano de desenvolvimento), página somente leitu
 - Nome, CPF (mascarado como retornado pelo backend), endereço completo, telefones (com label do tipo) e emails
 - Ações rápidas: **Editar** e **Excluir** (com `ConfirmDialog` + Toast), visíveis apenas para `ADMIN`
 - **Voltar** para a listagem, disponível a todos os usuários autenticados
+
+## Segurança
+
+Hardening aplicado (Fase 7 do plano de desenvolvimento):
+
+- **Token JWT em `sessionStorage`** (`utils/tokenStorage.ts`), nunca em `localStorage`; limpo no logout, no 401 (interceptor do axios) e ao expirar (`AuthProvider` agenda logout automático via `exp` do token)
+- **Rotas protegidas**: tudo exceto `/login` fica sob `ProtectedRoute`, que redireciona para login sem token válido; ações de escrita (`/clientes/novo`, `/clientes/:id/editar`, excluir) também são bloqueadas no componente para usuários sem role `ADMIN`, não só escondidas na UI
+- **CSP** injetada via plugin do Vite (`vite.config.ts`) apenas no build de produção — `script-src 'self'`, `object-src 'none'`, `connect-src` restrito à API configurada em `VITE_API_URL`; o build falha explicitamente se essa env var não estiver definida
+- **Sourcemaps desabilitados** no build de produção, para não expor o código-fonte original
+- **Rota `/dev/components`** (showcase) só existe em modo dev — removida do bundle de produção
+- **`Referrer-Policy: strict-origin-when-cross-origin`** via meta tag
+- Sanitização de todos os campos de texto antes do envio (`utils/sanitize.ts`) e nenhum uso de `dangerouslySetInnerHTML` na base de código
+- Mensagens de erro exibidas ao usuário são sempre genéricas (ex: "Não foi possível salvar o cliente."); nenhuma resposta técnica do backend é repassada à UI
+- `npm audit` sem vulnerabilidades conhecidas nas dependências no momento da última verificação
+
+**Limitação conhecida:** como o app é servido como SPA estática, a meta tag de CSP não consegue setar `X-Frame-Options`, `Strict-Transport-Security`, `X-Content-Type-Options` nem `Permissions-Policy` (e a diretiva `frame-ancestors` do CSP é ignorada quando entregue via `<meta>`). Esses headers precisam ser configurados na camada de hosting/CDN/reverse proxy escolhida para produção.

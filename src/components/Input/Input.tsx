@@ -26,6 +26,7 @@ const StyledInput = styled.input<{ $hasError: boolean }>`
   &:focus {
     outline: none;
     border-color: ${({ theme, $hasError }) => ($hasError ? theme.colors.error : theme.colors.petrol)};
+    box-shadow: 0 0 0 3px ${({ $hasError }) => ($hasError ? 'rgba(214, 69, 69, 0.25)' : 'rgba(11, 79, 108, 0.25)')};
   }
 
   &:disabled {

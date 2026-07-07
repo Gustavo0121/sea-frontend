@@ -90,6 +90,11 @@ const NavItem = styled(NavLink)`
     background-color: ${({ theme }) => theme.colors.petrolDark};
   }
 
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.orange};
+    outline-offset: 2px;
+  }
+
   &.active {
     background-color: ${({ theme }) => theme.colors.petrol};
     color: ${({ theme }) => theme.colors.white};

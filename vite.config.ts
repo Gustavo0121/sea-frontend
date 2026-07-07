@@ -1,4 +1,5 @@
-import { defineConfig, type Plugin, type ResolvedConfig } from 'vite'
+import { type Plugin, type ResolvedConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 
 // Injeta o Content-Security-Policy apenas no build de produção: em dev o
@@ -46,5 +47,10 @@ export default defineConfig({
   build: {
     // Não expor o código-fonte original no bundle de produção.
     sourcemap: false,
+  },
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.ts'],
+    css: false,
   },
 })

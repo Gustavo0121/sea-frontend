@@ -4,9 +4,13 @@ import { authService } from '../services/authService'
 import { UNAUTHORIZED_EVENT } from '../services/api'
 import { tokenStorage } from '../utils/tokenStorage'
 import { decodeToken, isTokenExpired } from '../utils/jwt'
+import { useToast } from '../hooks/useToast'
 import type { DecodedToken, LoginCredentials } from '../types/auth'
 
+const SESSION_EXPIRED_MESSAGE = 'Sua sessão expirou. Faça login novamente.'
+
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const { showToast } = useToast()
   const [user, setUser] = useState<DecodedToken | null>(() => {
     const token = tokenStorage.get()
     const decoded = token ? decodeToken(token) : null
@@ -21,6 +25,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null)
   }, [])
 
+  // Logout disparado automaticamente (timer de expiração ou 401 da API), não por
+  // ação do usuário: avisa que a sessão expirou para não parecer um erro do sistema.
+  const handleSessionExpired = useCallback(() => {
+    logout()
+    showToast(SESSION_EXPIRED_MESSAGE, 'info')
+  }, [logout, showToast])
+
   const scheduleAutoLogout = useCallback(
     (decoded: DecodedToken | null) => {
       window.clearTimeout(logoutTimerRef.current)
@@ -28,9 +39,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const msUntilExpiry = decoded.exp * 1000 - Date.now()
       if (msUntilExpiry <= 0) return
-      logoutTimerRef.current = window.setTimeout(logout, msUntilExpiry)
+      logoutTimerRef.current = window.setTimeout(handleSessionExpired, msUntilExpiry)
     },
-    [logout],
+    [handleSessionExpired],
   )
 
   const login = useCallback(
@@ -49,13 +60,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const decoded = token ? decodeToken(token) : null
     if (decoded && isTokenExpired(decoded)) {
       tokenStorage.clear()
+      showToast(SESSION_EXPIRED_MESSAGE, 'info')
     } else if (decoded) {
       scheduleAutoLogout(decoded)
     }
 
-    window.addEventListener(UNAUTHORIZED_EVENT, logout)
-    return () => window.removeEventListener(UNAUTHORIZED_EVENT, logout)
-  }, [logout, scheduleAutoLogout])
+    window.addEventListener(UNAUTHORIZED_EVENT, handleSessionExpired)
+    return () => window.removeEventListener(UNAUTHORIZED_EVENT, handleSessionExpired)
+  }, [handleSessionExpired, scheduleAutoLogout, showToast])
 
   const value = useMemo(
     () => ({ user, isAuthenticated: !!user, login, logout }),

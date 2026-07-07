@@ -43,6 +43,11 @@ export const Button = styled.button<{ $variant?: ButtonVariant }>`
 
   ${({ $variant = 'primary' }) => variantStyles[$variant]}
 
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.petrol};
+    outline-offset: 2px;
+  }
+
   &:disabled {
     background-color: ${({ theme }) => theme.colors.grayMedium};
     border-color: ${({ theme }) => theme.colors.grayMedium};

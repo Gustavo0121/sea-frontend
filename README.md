@@ -45,11 +45,13 @@ A aplicação sobe em `http://localhost:5173` (porta padrão do Vite).
 ## Outros comandos
 
 ```bash
-npm run build         # build de produção (type-check + bundle em dist/)
+npm run build          # build de produção (type-check + bundle em dist/)
 npm run preview        # serve o build de produção localmente
 npm run lint            # roda o ESLint
 npm run format          # formata o código com Prettier
 npm run format:check   # verifica formatação sem alterar arquivos
+npm run test            # roda a suíte de testes em modo watch
+npm run test:run       # roda a suíte de testes uma vez (CI)
 ```
 
 ## Estrutura de pastas
@@ -133,3 +135,30 @@ Rota `/clientes/:id` (Fase 6 do plano de desenvolvimento), página somente leitu
 - Nome, CPF (mascarado como retornado pelo backend), endereço completo, telefones (com label do tipo) e emails
 - Ações rápidas: **Editar** e **Excluir** (com `ConfirmDialog` + Toast), visíveis apenas para `ADMIN`
 - **Voltar** para a listagem, disponível a todos os usuários autenticados
+
+## Segurança
+
+Hardening aplicado (Fase 7 do plano de desenvolvimento):
+
+- **Token JWT em `sessionStorage`** (`utils/tokenStorage.ts`), nunca em `localStorage`; limpo no logout, no 401 (interceptor do axios) e ao expirar (`AuthProvider` agenda logout automático via `exp` do token)
+- **Rotas protegidas**: tudo exceto `/login` fica sob `ProtectedRoute`, que redireciona para login sem token válido; ações de escrita (`/clientes/novo`, `/clientes/:id/editar`, excluir) também são bloqueadas no componente para usuários sem role `ADMIN`, não só escondidas na UI
+- **CSP** injetada via plugin do Vite (`vite.config.ts`) apenas no build de produção — `script-src 'self'`, `object-src 'none'`, `connect-src` restrito à API configurada em `VITE_API_URL`; o build falha explicitamente se essa env var não estiver definida
+- **Sourcemaps desabilitados** no build de produção, para não expor o código-fonte original
+- **Rota `/dev/components`** (showcase) só existe em modo dev — removida do bundle de produção
+- **`Referrer-Policy: strict-origin-when-cross-origin`** via meta tag
+- Sanitização de todos os campos de texto antes do envio (`utils/sanitize.ts`) e nenhum uso de `dangerouslySetInnerHTML` na base de código
+- Mensagens de erro exibidas ao usuário são sempre genéricas (ex: "Não foi possível salvar o cliente."); nenhuma resposta técnica do backend é repassada à UI
+- `npm audit` sem vulnerabilidades conhecidas nas dependências no momento da última verificação
+
+**Limitação conhecida:** como o app é servido como SPA estática, a meta tag de CSP não consegue setar `X-Frame-Options`, `Strict-Transport-Security`, `X-Content-Type-Options` nem `Permissions-Policy` (e a diretiva `frame-ancestors` do CSP é ignorada quando entregue via `<meta>`). Esses headers precisam ser configurados na camada de hosting/CDN/reverse proxy escolhida para produção.
+
+## Testes
+
+Fase 8 do plano de desenvolvimento. Stack de testes: **Vitest** + **Testing Library** (`@testing-library/react`, `user-event`, `jest-dom`) + **MSW** para mockar a API. Configuração em `vite.config.ts` (bloco `test`) e `src/test/setup.ts`.
+
+- **Testes unitários**: máscaras (`utils/masks.test.ts`), validação de CPF (`utils/cpf.test.ts`), sanitização (`utils/sanitize.test.ts`), decodificação/expiração de JWT (`utils/jwt.test.ts`) e o schema Zod do formulário de cliente (`pages/ClienteForm/clienteFormSchema.test.ts`)
+- **Testes de componente**: `Input`, `Button` e `ConfirmDialog` — label/erro/aria-invalid, variantes, estados disabled, callbacks de clique
+- **Teste de integração** (`src/test/integration/clienteFlow.test.tsx`): sobe o `App` real (todos os providers + router) com a API mockada via MSW e percorre o fluxo completo — login → dashboard → listagem → cadastro → edição → exclusão — validando o comportamento ponta a ponta, não apenas unidades isoladas
+- Ajustes de UX desta fase: ring de foco visível em `Input`/`Select` (antes só mudava a cor da borda) e `:focus-visible` em `Button` e nos links do menu lateral, para acessibilidade de navegação por teclado
+
+Rodar `npm run test:run` antes de abrir um PR.
